@@ -1,27 +1,22 @@
-package com.app.flightnightservices.entity;
+package com.app.flightnightservices.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Flight {
+public class FlightResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String flightNumber;
     private String originAirport;
     private String destinationAirport;
@@ -31,5 +26,4 @@ public class Flight {
     private LocalTime time;
     private Time duration;
     private int availableSeats;
-
 }
