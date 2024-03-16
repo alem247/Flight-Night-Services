@@ -24,7 +24,7 @@ public class FlightDataLoader {
     @PostConstruct
     @Transactional
     public void loadFlights() throws IOException {
-        InputStream inputStream = this.getClass().getResourceAsStream("/flights.txt");
+        InputStream inputStream = this.getClass().getResourceAsStream("src/main/resources/flights.txt");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         String line;

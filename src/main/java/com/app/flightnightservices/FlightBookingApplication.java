@@ -19,8 +19,6 @@ public class FlightBookingApplication extends JFrame {
 
     private final FlightController flightController;
 
-    private FlightRepository flightRepository;
-
     private JComboBox<String> originComboBox;
     private JComboBox<String> destinationComboBox;
     private JTable flightsTable;
@@ -72,11 +70,7 @@ public class FlightBookingApplication extends JFrame {
         return panel;
     }
 
-
-    // Modify the constructor to accept the FlightController instead of FlightService and FlightRepository
     public FlightBookingApplication(FlightController flightController) {
-        // this.flightService = flightService;
-        // this.flightRepository = flightRepository;
 
         this.flightController = flightController;
 
