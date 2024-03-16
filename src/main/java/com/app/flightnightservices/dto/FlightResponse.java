@@ -1,6 +1,7 @@
 package com.app.flightnightservices.dto;
 
 
+import com.app.flightnightservices.entity.Flight;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,4 +27,18 @@ public class FlightResponse {
     private LocalTime time;
     private Time duration;
     private int availableSeats;
+
+    public FlightResponse(Flight flight){
+        this.id = flight.getId();
+        this.flightNumber = flight.getFlightNumber();
+        this.originAirport = flight.getOriginAirport();
+        this.destinationAirport = flight.getDestinationAirport();
+        this.carrier = flight.getCarrier();
+        this.price = flight.getPrice();
+        this.day = flight.getDay();
+        this.time = flight.getTime();
+        this.duration = flight.getDuration();
+        this.availableSeats = flight.getAvailableSeats();
+    }
+
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,17 +25,21 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public void addFlight(FlightRequest flight) {
-        Flight newFlight = new Flight();
-        newFlight.setFlightNumber(flight.getFlightNumber());
-        newFlight.setOriginAirport(flight.getOriginAirport());
-        newFlight.setDestinationAirport(flight.getDestinationAirport());
-        newFlight.setCarrier(flight.getCarrier());
-        newFlight.setPrice(flight.getPrice());
-        newFlight.setDay(flight.getDay());
-        newFlight.setTime(flight.getTime());
-        newFlight.setDuration(flight.getDuration());
-        newFlight.setAvailableSeats(flight.getAvailableSeats());
-        flightRepository.save(newFlight);
+        try {
+            Flight newFlight = new Flight();
+            newFlight.setFlightNumber(flight.getFlightNumber());
+            newFlight.setOriginAirport(flight.getOriginAirport());
+            newFlight.setDestinationAirport(flight.getDestinationAirport());
+            newFlight.setCarrier(flight.getCarrier());
+            newFlight.setPrice(flight.getPrice());
+            newFlight.setDay(flight.getDay());
+            newFlight.setTime(flight.getTime());
+            newFlight.setDuration(flight.getDuration());
+            newFlight.setAvailableSeats(flight.getAvailableSeats());
+            flightRepository.save(newFlight);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -44,18 +49,21 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public void updateFlight(FlightRequest flight) {
-        Flight updatedFlight = flightRepository.findById(flight.getId()).get();
-        flight.setFlightNumber(flight.getFlightNumber());
-        flight.setOriginAirport(flight.getOriginAirport());
-        flight.setDestinationAirport(flight.getDestinationAirport());
-        flight.setCarrier(flight.getCarrier());
-        flight.setPrice(flight.getPrice());
-        flight.setDay(flight.getDay());
-        flight.setTime(flight.getTime());
-        flight.setDuration(flight.getDuration());
-        flight.setAvailableSeats(flight.getAvailableSeats());
-        flightRepository.save(updatedFlight);
-
+        try {
+            Flight updatedFlight = flightRepository.findById(flight.getId()).get();
+            updatedFlight.setFlightNumber(flight.getFlightNumber());
+            updatedFlight.setOriginAirport(flight.getOriginAirport());
+            updatedFlight.setDestinationAirport(flight.getDestinationAirport());
+            updatedFlight.setCarrier(flight.getCarrier());
+            updatedFlight.setPrice(flight.getPrice());
+            updatedFlight.setDay(flight.getDay());
+            updatedFlight.setTime(flight.getTime());
+            updatedFlight.setDuration(flight.getDuration());
+            updatedFlight.setAvailableSeats(flight.getAvailableSeats());
+            flightRepository.save(updatedFlight);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -64,12 +72,6 @@ public class FlightServiceImpl implements FlightService {
         return new FlightResponse(flight.getId(), flight.getFlightNumber(), flight.getOriginAirport(),
                 flight.getDestinationAirport(), flight.getCarrier(), flight.getPrice(), flight.getDay(),
                 flight.getTime(), flight.getDuration(), flight.getAvailableSeats());
-    }
-
-    public List<Flight> unpackListOfFlightResponses(List<FlightResponse> flightResponses) {
-         return flightResponses.stream().map(flightResponse -> new Flight(flightResponse.getId(), flightResponse.getFlightNumber(), flightResponse.getOriginAirport(),
-                flightResponse.getDestinationAirport(), flightResponse.getCarrier(), flightResponse.getPrice(), flightResponse.getDay(),
-                flightResponse.getTime(), flightResponse.getDuration(), flightResponse.getAvailableSeats())).collect(Collectors.toList());
     }
 
     public List<Flight> unpackListOfFlightRequests(List<FlightRequest> flightRequests) {
@@ -140,4 +142,39 @@ public class FlightServiceImpl implements FlightService {
     public List<FlightResponse> getFlightsByOriginAndCarrier(String origin, String carrier) {
         return packListOfFlightsToFlightResponses(flightRepository.findByOriginAirportAndCarrier(origin, carrier));
     }
+
+    @Override
+    public FlightResponse getFlightByFlightNumber(String flightNumber) {
+        return new FlightResponse(flightRepository.findByFlightNumber(flightNumber));
+    }
+
+    @Override
+    public List<FlightResponse> searchFlights(FlightRequest request) {
+        List<Flight> flights = flightRepository.findByOriginAirportAndDestinationAirport(request.getOriginAirport(), request.getDestinationAirport());
+        return flights.stream().map(FlightResponse::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public FlightResponse getFlightByIndex(int index) {
+        List<Flight> flights = flightRepository.findAll();
+        if (index >= 0 && index < flights.size()) {
+            return new FlightResponse(flights.get(index));
+        }
+        return null;
+    }
+
+    @Override
+    public boolean bookFlight(FlightRequest request) {
+        Optional<Flight> optionalFlight = flightRepository.findById(request.getId());
+        if (optionalFlight.isPresent()) {
+            Flight flight = optionalFlight.get();
+            if (flight.getAvailableSeats() >= request.getAvailableSeats()) {
+                flight.setAvailableSeats(flight.getAvailableSeats() - request.getAvailableSeats());
+                flightRepository.save(flight);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.app.flightnightservices.entity;
 
+import com.app.flightnightservices.dto.FlightResponse;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,4 +33,8 @@ public class Flight {
     private Time duration;
     private int availableSeats;
 
+
+    public Flight(FlightResponse flightResponse) {
+
+    }
 }

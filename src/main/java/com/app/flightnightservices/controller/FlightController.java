@@ -60,6 +60,11 @@ public class FlightController {
         return flightService.getFlightsByDestination(destination);
     }
 
+    @GetMapping("/getFlightsByOriginAndDestination")
+    public List<FlightResponse> getFlightsByOriginAndDestination(@RequestParam String origin, @RequestParam String destination) {
+        return flightService.getFlightsByOriginAndDestination(origin, destination);
+    }
+
     @GetMapping("/getFlightsByCarrier")
     public List<FlightResponse> getFlightsByCarrier(@RequestParam String carrier) {
         return flightService.getFlightsByCarrier(carrier);
@@ -78,6 +83,27 @@ public class FlightController {
     @GetMapping("/getFlightsByPrice")
     public List<FlightResponse> getFlightsByPrice(@RequestParam double price) {
         return flightService.getFlightsByPrice(price);
+    }
+
+    @PostMapping("/bookFlight")
+    public ResponseEntity<String> bookFlight(@RequestParam String flightNumber, @RequestParam String originAirport,
+                                             @RequestParam String destinationAirport, @RequestParam String carrier,
+                                             @RequestParam double price, @RequestParam LocalDate day,
+                                             @RequestParam LocalTime time, @RequestParam int numberOfSeats) {
+
+
+        boolean isBookingSuccessful = flightService.bookFlight(new FlightRequest(flightNumber, originAirport, destinationAirport, carrier, price, day, time,numberOfSeats));
+        if (isBookingSuccessful) {
+            return ResponseEntity.ok("Booking successful.");
+        } else {
+            return ResponseEntity.badRequest().body("Not enough seats available on this flight.");
+        }
+    }
+
+    @GetMapping("/checkAvailableSeats")
+    public ResponseEntity<Integer> checkAvailableSeats(@RequestParam int flightId) {
+        int availableSeats = flightService.getFlightById(flightId).getAvailableSeats();
+        return ResponseEntity.ok(availableSeats);
     }
 
 }

@@ -17,6 +17,8 @@ public interface FlightService {
     void deleteFlight(int id);
     void updateFlight(FlightRequest flight);
     FlightResponse getFlightById(int id);
+
+    FlightResponse getFlightByFlightNumber(String flightNumber);
     List<FlightResponse> getAllFlights();
     List<FlightResponse> getFlightsByOrigin(String origin);
     List<FlightResponse> getFlightsByDestination(String destination);
@@ -27,4 +29,9 @@ public interface FlightService {
     List<FlightResponse> getFlightsByAvailableSeats(int availableSeats);
     List<FlightResponse> getFlightsByOriginAndDestination(String origin, String destination);
     List<FlightResponse> getFlightsByOriginAndCarrier(String origin, String carrier);
+
+    List<FlightResponse> searchFlights(FlightRequest request);
+    FlightResponse getFlightByIndex(int index);
+    boolean bookFlight(FlightRequest request);
+
 }
